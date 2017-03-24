@@ -168,7 +168,7 @@ if case let Trade_1.Buy(stock, amount) = trade {
 
 // 例子
 let tp = (stock: "TSLA", amount: 100)
-let mytrade = Trade_1.Sell(tp)
+let mytrade = Trade_1.Sell(stock: tp.0, amount: tp.1)
 
 if case let Trade_1.Sell(stock, amount) = mytrade {
     print("buy \(amount) of \(stock)")
@@ -193,17 +193,17 @@ enum Desktop {
 // 一开始默认配置是： (0, "", "") as Config 假设我命名为defaultConfig
 // 将该配置传入selectRAM(defaultConfig) 替换RAM为32后返回修改后的配置
 // 同理传入selectGPU() 接着 传入selectGPU()
-let aTower = Desktop.Tower(selectGPU(selectCPU(selectRAM((0, "", "") as Config))))
+let aTower = Desktop.Tower(selectGPU(config: selectCPU(config: selectRAM(config: (0, "", "") as Config))))
 
 // 好吧 上面一堆代码配置PC机不直观 我们需要自定义一个符号来实现
 
-infix operator <^>{associativity left}
-
-func <^>(a:Config,f:(Config)->Config)->Config{
-    return f(a)
-}
-let config = (0, "", "") <^> selectRAM  <^> selectCPU <^> selectGPU
-let aCube = Desktop.Cube(config)
+//infix operator <^>{associativity left}
+//
+//func <^>(a:Config,f:(Config)->Config)->Config{
+//    return f(a)
+//}
+//let config = (0, "", "") <^> selectRAM  <^> selectCPU <^> selectGPU   //错误出在哪儿呢？
+//let aCube = Desktop.Cube(config)
 
 
 //: 一些使用案例
@@ -264,10 +264,10 @@ enum Device {
     // 这是定义的方法
     func introduced() -> String {
         switch self {
-        case AppleTV: return "\(self) was introduced 2006"
-        case iPhone: return "\(self) was introduced 2007"
-        case iPad: return "\(self) was introduced 2010"
-        case AppleWatch: return "\(self) was introduced 2014"
+        case .AppleTV: return "\(self) was introduced 2006"
+        case .iPhone: return "\(self) was introduced 2007"
+        case .iPad: return "\(self) was introduced 2010"
+        case .AppleWatch: return "\(self) was introduced 2014"
         }
     }
 }
@@ -279,8 +279,8 @@ enum Device_1 {
     case iPad, iPhone
     var year: Int {
         switch self {
-        case iPhone: return 2007
-        case iPad: return 2010
+        case .iPhone: return 2007
+        case .iPad: return 2010
         }
     }
 }
@@ -294,7 +294,7 @@ enum Device_2{
         return nil
     }
 }
-print (Device_2.fromSlang("iWatch"))
+print (Device_2.fromSlang(term: "iWatch") ?? <#default value#>)
 
 // 可变方法
 // 倘若方法中需要修改实例的值即self 方法前要加上mutating关键字
@@ -302,12 +302,12 @@ enum TriStateSwitch {
     case Off, Low, High
     mutating func next() {
         switch self {
-        case Off:
-            self = Low
-        case Low:
-            self = High
-        case High:
-            self = Off
+        case .Off:
+            self = .Low
+        case .Low:
+            self = .High
+        case .High:
+            self = .Off
         }
     }
 }
